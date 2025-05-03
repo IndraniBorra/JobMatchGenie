@@ -22,20 +22,6 @@
       min-height: 100vh;
     }
 
-    .main {
-      margin-left: 260px;
-      padding: 24px;
-      width: calc(100% - 260px);
-      overflow-y: auto;
-    }
-
-    .chat-header {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
     .parser-wrapper {
       max-width: 800px;
       margin: 0 auto 40px;
@@ -110,10 +96,45 @@
     .reupload-button button:hover {
       background-color: #059669;
     }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+    
+      .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 16px !important;
+      }
+    
+      .chat-header {
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+      }
+    
+      .parser-wrapper {
+        margin: 20px 12px 40px;
+        padding: 24px;
+      }
+    
+      .upload-section button,
+      .reupload-button button {
+        width: 100%;
+        max-width: 300px;
+      }
+    
+      .upload-section input[type="file"] {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+    
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container sidebar-open">
     <div class="sidebar">
       <div class="sidebar-header">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
@@ -128,7 +149,9 @@
 
     <div class="main">
       <div class="chat-header">
+        <button class="toggle-btn" id="header-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <span>Resume Parser</span>
+        <a href="/" class="home-button">Home🏠</a>
       </div>
 
       <div class="parser-wrapper">
@@ -194,11 +217,8 @@
       document.getElementById("results").style.display = "block";
       document.getElementById("reupload").style.display = "flex";
     }
-
-    function toggleSidebar() {
-      document.querySelector(".container").classList.toggle("sidebar-closed");
-    }
+    
   </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
-

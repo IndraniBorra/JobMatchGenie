@@ -4,24 +4,28 @@
   <meta charset="UTF-8">
   <title>Resume Score – Job Match Genie</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <!-- <style>
+  <style>
     .score-wrapper {
-        max-width: 1300px;
-        margin: 40px auto;
-        padding: 40px;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
+      width: 95%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
 
     .compare-section {
-        display: flex;
-        gap: 48px; /* More spacing between resume and JD sides */
-        justify-content: space-between;
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      flex-wrap: wrap;
     }
 
     .input-block {
-      flex: 1;
+      flex: 1 1 45%;
+      min-width: 300px;
       display: flex;
       flex-direction: column;
     }
@@ -32,13 +36,14 @@
     }
 
     .input-block textarea {
-      height: 260px;
+      height: 300px;
       resize: vertical;
-      padding: 10px;
-      font-size: 15px;
+      padding: 12px;
+      font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
       margin-bottom: 12px;
+      width: 100%;
     }
 
     .input-block input[type="file"] {
@@ -51,14 +56,15 @@
     }
 
     .score-actions button {
-      background: var(--primary-color);
+      background: var(--primary-color, #3b82f6);
       border: none;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       font-weight: 600;
       margin: 0 8px;
       cursor: pointer;
+      font-size: 16px;
     }
 
     .score-actions button:hover {
@@ -68,138 +74,73 @@
     .score-result {
       margin-top: 20px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       text-align: center;
     }
-  </style> -->
-  <style>
-    .score-wrapper {
-        width: 95%;
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 30px;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-    }
 
-    .compare-section {
-        display: flex;
-        flex-direction: row;
-        gap: 32px;
-        flex-wrap: wrap;
-    }
-
-    .input-block {
-        flex: 1 1 45%;   /* Take up to 45% space each */
-        min-width: 300px;
-        display: flex;
+    @media (max-width: 768px) {
+      .container {
         flex-direction: column;
-    }
+      }
 
-    .input-block label {
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
+      .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 16px !important;
+      }
 
-    .input-block textarea {
-        height: 300px;
-        resize: vertical;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 12px;
+      .chat-header {
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .score-wrapper {
+        margin: 20px 12px 40px;
+        padding: 24px;
+      }
+
+      .compare-section {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .input-block textarea {
+        height: 220px;
+      }
+
+      .score-actions button {
         width: 100%;
+        max-width: 300px;
+        margin-top: 10px;
+      }
+
+      .input-block input[type="file"] {
+        width: 100%;
+        max-width: 300px;
+      }
     }
-
-    .input-block input[type="file"] {
-        margin-top: 4px;
-    }
-
-    .score-actions {
-        margin-top: 24px;
-        text-align: center;
-    }
-
-    .score-actions button {
-        background: var(--primary-color, #3b82f6);
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        margin: 0 8px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .score-actions button:hover {
-        background: #2563eb;
-    }
-
-    .score-result {
-        margin-top: 20px;
-        font-weight: bold;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-        .input-block {
-            flex: 1 1 100%;
-        }
-
-        .compare-section {
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .input-block textarea {
-            height: 240px;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .score-wrapper {
-            padding: 20px;
-        }
-
-        .input-block textarea {
-            height: 220px;
-        }
-
-        .score-actions button {
-            width: 100%;
-            margin-top: 10px;
-        }
-    }
-</style>
-
-
-
+  </style>
 </head>
 <body>
   <div class="container sidebar-open">
     <div class="sidebar">
-      <div class="sidebar-header" >
+      <div class="sidebar-header">
         <button class="toggle-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
-        <span id="sidebar-heading">App Features</span>
+        <span>App Features</span>
       </div>
-      <div class="sidebar-nav">
-        <ul class="feature-nav-list" id="feature-links">
-          <li><a class="feature-link" href="/resume-parser">Resume Parser</a></li>
-          <li><a class="feature-link active" href="/resume-score">Resume Score</a></li>
-          <li><a class="feature-link" href="/cover-letter">Cover Letter Generation</a></li>
-        </ul>
-      </div>
+      <ul class="feature-nav-list">
+        <li><a class="feature-link" href="/resume-parser">Resume Parser</a></li>
+        <li><a class="feature-link active" href="/resume-score">Resume Score</a></li>
+        <li><a class="feature-link" href="/cover-letter">Cover Letter Generation</a></li>
+      </ul>
     </div>
 
     <div class="main">
       <div class="chat-header">
-        <span id="app-name-heading">Resume Score</span>
+        <button class="toggle-btn" id="header-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <span>Resume Score</span>
+        <a href="/" class="home-button">Home🏠</a>
       </div>
 
       <div class="score-wrapper">
@@ -207,12 +148,12 @@
           <div class="compare-section">
             <div class="input-block">
               <label for="text1">Type or upload Resume:</label>
-              <textarea id="text1" placeholder="Paste resume text here..." oninput="disableFiles()"></textarea>
+              <textarea id="text1" placeholder="Paste resume text here." oninput="disableFiles()"></textarea>
               <input type="file" id="file1" accept="application/pdf" onchange="disableTexts()" />
             </div>
             <div class="input-block">
               <label for="text2">Type or upload Job Description:</label>
-              <textarea id="text2" placeholder="Paste job description text here..." oninput="disableFiles()"></textarea>
+              <textarea id="text2" placeholder="Paste job description text here." oninput="disableFiles()"></textarea>
               <input type="file" id="file2" accept="application/pdf" onchange="disableTexts()" />
             </div>
           </div>

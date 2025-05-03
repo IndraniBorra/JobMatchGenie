@@ -1,1 +1,2 @@
 This folder contain pretraining results of T5 model used for cover letter generation
+File size is too large please access the files from this drive link: https://drive.google.com/drive/folders/1zDuj-dmJwGWPQY5PJUvjJ1UokDj4SLdB?usp=sharinghttps://drive.google.com/drive/folders/1zDuj-dmJwGWPQY5PJUvjJ1UokDj4SLdB?usp=sharing

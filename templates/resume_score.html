@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Score – Job Match Genie</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- <style>
+    .score-wrapper {
+        max-width: 1300px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+    .compare-section {
+        display: flex;
+        gap: 48px; /* More spacing between resume and JD sides */
+        justify-content: space-between;
+    }
+
+    .input-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-block label {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .input-block textarea {
+      height: 260px;
+      resize: vertical;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .input-block input[type="file"] {
+      margin-top: 4px;
+    }
+
+    .score-actions {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .score-actions button {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 0 8px;
+      cursor: pointer;
+    }
+
+    .score-actions button:hover {
+      background: #2563eb;
+    }
+
+    .score-result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+  </style> -->
+  <style>
+    .score-wrapper {
+        width: 95%;
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .compare-section {
+        display: flex;
+        flex-direction: row;
+        gap: 32px;
+        flex-wrap: wrap;
+    }
+
+    .input-block {
+        flex: 1 1 45%;   /* Take up to 45% space each */
+        min-width: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-block label {
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .input-block textarea {
+        height: 300px;
+        resize: vertical;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+
+    .input-block input[type="file"] {
+        margin-top: 4px;
+    }
+
+    .score-actions {
+        margin-top: 24px;
+        text-align: center;
+    }
+
+    .score-actions button {
+        background: var(--primary-color, #3b82f6);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin: 0 8px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .score-actions button:hover {
+        background: #2563eb;
+    }
+
+    .score-result {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .input-block {
+            flex: 1 1 100%;
+        }
+
+        .compare-section {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-block textarea {
+            height: 240px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .score-wrapper {
+            padding: 20px;
+        }
+
+        .input-block textarea {
+            height: 220px;
+        }
+
+        .score-actions button {
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+</style>
+
+
+
+</head>
+<body>
+  <div class="container sidebar-open">
+    <div class="sidebar">
+      <div class="sidebar-header" >
+        <button class="toggle-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <span id="sidebar-heading">App Features</span>
+      </div>
+      <div class="sidebar-nav">
+        <ul class="feature-nav-list" id="feature-links">
+          <li><a class="feature-link" href="/resume-parser">Resume Parser</a></li>
+          <li><a class="feature-link active" href="/resume-score">Resume Score</a></li>
+          <li><a class="feature-link" href="/cover-letter">Cover Letter Generation</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="chat-header">
+        <span id="app-name-heading">Resume Score</span>
+      </div>
+
+      <div class="score-wrapper">
+        <form id="score-form">
+          <div class="compare-section">
+            <div class="input-block">
+              <label for="text1">Type or upload Resume:</label>
+              <textarea id="text1" placeholder="Paste resume text here..." oninput="disableFiles()"></textarea>
+              <input type="file" id="file1" accept="application/pdf" onchange="disableTexts()" />
+            </div>
+            <div class="input-block">
+              <label for="text2">Type or upload Job Description:</label>
+              <textarea id="text2" placeholder="Paste job description text here..." oninput="disableFiles()"></textarea>
+              <input type="file" id="file2" accept="application/pdf" onchange="disableTexts()" />
+            </div>
+          </div>
+          <div class="score-actions">
+            <button type="submit">Compute Match Score</button>
+            <button type="button" onclick="resetAll()">Reset</button>
+          </div>
+        </form>
+        <div class="score-result" id="result-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function extractTextFromPDF(file) {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/extract-text", { method: "POST", body: fd });
+      const data = await res.json();
+      return data.text || "";
+    }
+
+    function disableFiles() {
+      document.getElementById("file1").disabled = true;
+      document.getElementById("file2").disabled = true;
+    }
+
+    function disableTexts() {
+      document.getElementById("text1").disabled = true;
+      document.getElementById("text2").disabled = true;
+    }
+
+    function resetAll() {
+      document.getElementById("file1").disabled = false;
+      document.getElementById("file2").disabled = false;
+      document.getElementById("text1").disabled = false;
+      document.getElementById("text2").disabled = false;
+      document.getElementById("text1").value = "";
+      document.getElementById("text2").value = "";
+      document.getElementById("file1").value = "";
+      document.getElementById("file2").value = "";
+      document.getElementById("result-text").innerText = "";
+    }
+
+    document.getElementById("score-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      let text1 = document.getElementById("text1").value.trim();
+      let text2 = document.getElementById("text2").value.trim();
+      const file1 = document.getElementById("file1").files[0];
+      const file2 = document.getElementById("file2").files[0];
+
+      if (!text1 && file1) text1 = await extractTextFromPDF(file1);
+      if (!text2 && file2) text2 = await extractTextFromPDF(file2);
+
+      if (!text1 || !text2) {
+        alert("Please provide both resume and job description via text or PDF.");
+        return;
+      }
+
+      const res = await fetch("/compare-text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text1, text2 })
+      });
+
+      const json = await res.json();
+      const pct = (json.similarity * 100).toFixed(2);
+      document.getElementById("result-text").innerText = `Match Score: ${pct}%`;
+    });
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

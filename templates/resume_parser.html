@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resume Parser – Job Match Genie</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      height: 100%;
+    }
+
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 24px;
+      width: calc(100% - 260px);
+      overflow-y: auto;
+    }
+
+    .chat-header {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .parser-wrapper {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      padding: 32px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .parser-wrapper h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .upload-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .upload-section input[type="file"] {
+      padding: 8px;
+    }
+
+    .upload-section button {
+      padding: 10px 20px;
+      font-weight: 600;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .upload-section button:hover {
+      background: #2563eb;
+    }
+
+    .results {
+      margin-top: 30px;
+    }
+
+    .results h3 {
+      margin-bottom: 8px;
+    }
+
+    .results pre {
+      background: #f3f4f6;
+      padding: 12px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow: visible;
+    }
+
+    .reupload-button {
+      margin-top: 30px;
+      display: none;
+      justify-content: center;
+    }
+
+    .reupload-button button {
+      background-color: #10a37f;
+      color: white;
+      font-weight: 600;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .reupload-button button:hover {
+      background-color: #059669;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <span>App Features</span>
+      </div>
+      <ul class="feature-nav-list">
+        <li><a class="feature-link active" href="/resume-parser">Resume Parser</a></li>
+        <li><a class="feature-link" href="/resume-score">Resume Score</a></li>
+        <li><a class="feature-link" href="/cover-letter">Cover Letter Generation</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="chat-header">
+        <span>Resume Parser</span>
+      </div>
+
+      <div class="parser-wrapper">
+        <h2 id="upload-title">Upload Resume to Extract Details</h2>
+        <div class="upload-section" id="upload-section">
+          <input type="file" id="resumeFile" accept="application/pdf" />
+          <button onclick="parseResume()">Extract</button>
+        </div>
+
+        <div class="results" id="results" style="display:none;">
+          <h3>📧 Email:</h3>
+          <pre id="email"></pre>
+
+          <h3>📞 Phone:</h3>
+          <pre id="phone"></pre>
+
+          <h3>💼 Skills:</h3>
+          <pre id="skills"></pre>
+
+          <h3>📃 Text Preview:</h3>
+          <pre id="text_preview"></pre>
+        </div>
+
+        <div class="reupload-button" id="reupload">
+          <button onclick="location.reload()">Upload Another Resume</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function parseResume() {
+      const fileInput = document.getElementById("resumeFile");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please upload a PDF resume.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/parse-resume", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      document.getElementById("email").innerText = data.email || "Not found";
+      document.getElementById("phone").innerText = data.phone || "Not found";
+      document.getElementById("skills").innerText = (data.skills || []).join(", ") || "Not found";
+      document.getElementById("text_preview").innerText = data.text_preview || "No preview available";
+
+      document.getElementById("upload-section").style.display = "none";
+      document.getElementById("upload-title").style.display = "none";
+      document.getElementById("results").style.display = "block";
+      document.getElementById("reupload").style.display = "flex";
+    }
+
+    function toggleSidebar() {
+      document.querySelector(".container").classList.toggle("sidebar-closed");
+    }
+  </script>
+</body>
+</html>
+

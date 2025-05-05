@@ -1,282 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Resume Score – Job Match Genie</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <style>
-      html,
-      body {
-        overflow: hidden;
-      }
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Score – Job Match Genie</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .score-wrapper {
+      width: 95%;
+      max-width: 1300px;
+      margin: 30px auto;
+      padding: 32px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
 
-      .score-wrapper {
-        width: 95%;
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 30px;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
+    .compare-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
 
+    .input-block {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-block label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .input-block textarea {
+      height: 260px;
+      padding: 12px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    .input-block input[type="file"] {
+      margin-top: 8px;
+    }
+
+    .score-actions {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .score-actions button {
+      background: #3b82f6;
+      color: white;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .score-actions button:hover {
+      background: #2563eb;
+    }
+
+    .result-box {
+    margin-top: 30px;
+    background: #f9fafb;
+    padding: 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.2;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+  }
+
+  .result-box strong {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .result-box .score {
+    font-size: 18px;
+    color: #1d4ed8;
+    font-weight: bold;
+  }
+
+  .result-box ul {
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+  .result-box li {
+    margin-bottom: 4px;
+}
+
+    @media screen and (max-width: 768px) {
       .compare-section {
-        display: flex;
-        flex-direction: row;
-        gap: 32px;
-        flex-wrap: wrap;
-      }
-
-      .input-block {
-        flex: 1 1 45%;
-        min-width: 300px;
-        display: flex;
         flex-direction: column;
       }
 
-      .input-block label {
-        font-weight: 600;
-        margin-bottom: 8px;
-      }
-
       .input-block textarea {
-        height: 300px;
-        resize: vertical;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 12px;
-        width: 100%;
+        height: 180px;
       }
+    }
+  </style>
+</head>
+<body>
+  <div class="container sidebar-open">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <span>App Features</span>
+      </div>
+      <ul class="feature-nav-list">
+        <li><a class="feature-link" href="/resume-parser">Resume Parser</a></li>
+        <li><a class="feature-link active" href="/resume-score">Resume Score</a></li>
+        <li><a class="feature-link" href="/cover-letter">Cover Letter Generator</a></li>
+      </ul>
+    </div>
 
-      .input-block input[type="file"] {
-        margin-top: 4px;
-      }
-
-      .score-actions {
-        margin-top: 24px;
-        text-align: center;
-      }
-
-      .score-actions button {
-        background: var(--primary-color, #3b82f6);
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        margin: 0 8px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      .score-actions button:hover {
-        background: #2563eb;
-      }
-
-      .score-result {
-        margin-top: 20px;
-        font-weight: bold;
-        font-size: 1.2rem;
-        text-align: center;
-      }
-
-      @media (max-width: 768px) {
-        .container {
-          flex-direction: column;
-        }
-
-        .main {
-          margin-left: 0 !important;
-          width: 100% !important;
-          padding: 16px !important;
-        }
-
-        .chat-header {
-          flex-direction: row;
-          justify-content: center;
-          gap: 12px;
-        }
-
-        .score-wrapper {
-          margin: 20px 12px 40px;
-          padding: 24px;
-        }
-
-        .compare-section {
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .input-block textarea {
-          height: 220px;
-        }
-
-        .score-actions button {
-          width: 100%;
-          max-width: 300px;
-          margin-top: 10px;
-        }
-
-        .input-block input[type="file"] {
-          width: 100%;
-          max-width: 300px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container sidebar-open">
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <button
-            class="toggle-btn"
-            id="sidebar-toggle-btn"
-            onclick="toggleSidebar()"
-          >
-            &#9776;
-          </button>
-          <span>App Features</span>
-        </div>
-        <ul class="feature-nav-list">
-          <li>
-            <a class="feature-link" href="/resume-parser">Resume Parser</a>
-          </li>
-          <li>
-            <a class="feature-link active" href="/resume-score">Resume Score</a>
-          </li>
-          <li>
-            <a class="feature-link" href="/cover-letter"
-              >Cover Letter Generation</a
-            >
-          </li>
-        </ul>
+    <div class="main">
+      <div class="chat-header">
+        <button class="toggle-btn" id="header-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <span>Resume Score</span>
+        <a href="/" class="home-button">Home🏠</a>
       </div>
 
-      <div class="main">
-        <div class="chat-header">
-          <button
-            class="toggle-btn"
-            id="header-toggle-btn"
-            onclick="toggleSidebar()"
-          >
-            &#9776;
-          </button>
-          <span>Resume Score</span>
-          <a href="/" class="home-button">Home🏠</a>
-        </div>
+      <div class="score-wrapper">
+        <form id="score-form">
+          <div class="compare-section">
+            <div class="input-block">
+              <label for="resume-text">Paste Resume Text or Upload PDF:</label>
+              <textarea id="resume-text" placeholder="Type or paste resume here..." oninput="toggleResumeInput()"></textarea>
+              <input type="file" id="resume-file" accept="application/pdf" onchange="uploadAndFill('resume')">
+            </div>
+            <div class="input-block">
+              <label for="jd-text">Paste Job Description or Upload PDF:</label>
+              <textarea id="jd-text" placeholder="Type or paste job description here..." oninput="toggleJDInput()"></textarea>
+              <input type="file" id="jd-file" accept="application/pdf" onchange="uploadAndFill('jd')">
+            </div>
+          </div>
 
-        <div class="score-wrapper">
-          <form id="score-form">
-            <div class="compare-section">
-              <div class="input-block">
-                <label for="text1">Type or upload Resume:</label>
-                <textarea
-                  id="text1"
-                  placeholder="Paste resume text here."
-                  oninput="disableFiles()"
-                ></textarea>
-                <input
-                  type="file"
-                  id="file1"
-                  accept="application/pdf"
-                  onchange="disableTexts()"
-                />
-              </div>
-              <div class="input-block">
-                <label for="text2">Type or upload Job Description:</label>
-                <textarea
-                  id="text2"
-                  placeholder="Paste job description text here."
-                  oninput="disableFiles()"
-                ></textarea>
-                <input
-                  type="file"
-                  id="file2"
-                  accept="application/pdf"
-                  onchange="disableTexts()"
-                />
-              </div>
-            </div>
-            <div class="score-actions">
-              <button type="submit">Compute Match Score</button>
-              <button type="button" onclick="resetAll()">Reset</button>
-            </div>
-          </form>
-          <div class="score-result" id="result-text"></div>
+          <div class="score-actions">
+            <button type="submit">Compute Match Score</button>
+          </div>
+        </form>
+
+        <div id="result-box" class="result-box" style="display: none;">
+          <div id="result-text"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
-      async function extractTextFromPDF(file) {
-        const fd = new FormData();
-        fd.append("file", file);
-        const res = await fetch("/extract-text", { method: "POST", body: fd });
-        const data = await res.json();
-        return data.text || "";
-      }
+<script>
+  function toggleResumeInput() {
+    const text = document.getElementById("resume-text").value.trim();
+    document.getElementById("resume-file").disabled = !!text;
+  }
 
-      function disableFiles() {
-        document.getElementById("file1").disabled = true;
-        document.getElementById("file2").disabled = true;
-      }
+  function toggleJDInput() {
+    const text = document.getElementById("jd-text").value.trim();
+    document.getElementById("jd-file").disabled = !!text;
+  }
 
-      function disableTexts() {
-        document.getElementById("text1").disabled = true;
-        document.getElementById("text2").disabled = true;
-      }
+  async function uploadAndFill(type) {
+    const fileInput = document.getElementById(type + "-file");
+    const textArea = document.getElementById(type + "-text");
+    const file = fileInput.files[0];
+    if (!file) return;
 
-      function resetAll() {
-        document.getElementById("file1").disabled = false;
-        document.getElementById("file2").disabled = false;
-        document.getElementById("text1").disabled = false;
-        document.getElementById("text2").disabled = false;
-        document.getElementById("text1").value = "";
-        document.getElementById("text2").value = "";
-        document.getElementById("file1").value = "";
-        document.getElementById("file2").value = "";
-        document.getElementById("result-text").innerText = "";
-      }
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/extract-text", { method: "POST", body: formData });
+    const data = await res.json();
+    if (data.text) {
+      textArea.value = data.text;
+      fileInput.disabled = true;
+      if (type === 'resume') toggleResumeInput();
+      else toggleJDInput();
+    }
+  }
 
-      document
-        .getElementById("score-form")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
+  document.getElementById("score-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-          let text1 = document.getElementById("text1").value.trim();
-          let text2 = document.getElementById("text2").value.trim();
-          const file1 = document.getElementById("file1").files[0];
-          const file2 = document.getElementById("file2").files[0];
+    const text1 = document.getElementById("resume-text").value.trim();
+    const text2 = document.getElementById("jd-text").value.trim();
 
-          if (!text1 && file1) text1 = await extractTextFromPDF(file1);
-          if (!text2 && file2) text2 = await extractTextFromPDF(file2);
+    if (!text1 || !text2) {
+      alert("Both fields are required.");
+      return;
+    }
 
-          if (!text1 || !text2) {
-            alert(
-              "Please provide both resume and job description via text or PDF."
-            );
-            return;
-          }
+    const res = await fetch("/compare-text", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text1, text2 })
+    });
 
-          const res = await fetch("/compare-text", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text1, text2 }),
-          });
+    const data = await res.json();
 
-          const json = await res.json();
-          const pct = (json.similarity * 100).toFixed(2);
-          document.getElementById(
-            "result-text"
-          ).innerText = `Match Score: ${pct}%`;
-        });
-    </script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+    // Final formatted result text
+    let resultText = `
+<p><strong>Similarity Score:</strong> ${data.embedding_similarity ? (data.embedding_similarity * 100).toFixed(2) + "%" : "N/A"}</p>
+<p><strong>TF-IDF Match Score:</strong> ${data.tfidf_similarity ? (data.tfidf_similarity * 100).toFixed(2) + "%" : "N/A"}</p>
+<p><strong>Skill Match %:</strong> ${data.skill_match_pct ? data.skill_match_pct + "%" : "N/A"}</p>
+<p><strong>Match Category:</strong> ${data.match_category || "N/A"}</p>
+<p><strong>Recommendations:</strong></p> <ul>
+  ${
+    data.missing_skills && data.missing_skills.length
+      ? data.missing_skills.map(skill => `<li>${skill}</li>`).join("")
+      : "<li>None</li>"
+  }
+</ul>
+    `;
+
+    document.getElementById("result-text").innerHTML = resultText;
+    document.getElementById("result-box").style.display = "block";
+  });
+</script>
+
+</body>
 </html>

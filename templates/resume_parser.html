@@ -162,6 +162,13 @@
         </div>
 
         <div class="results" id="results" style="display:none;">
+
+          <h3>🔍 Resume Category:</h3>
+          <pre id="category"></pre>
+
+          <h3>🎯 Job Recommendation:</h3>
+          <pre id="job_recommendation"></pre>
+
           <h3>📧 Email:</h3>
           <pre id="email"></pre>
 
@@ -206,7 +213,8 @@
         alert("Error: " + data.error);
         return;
       }
-
+      document.getElementById("category").innerText = data.category || "Not predicted";
+      document.getElementById("job_recommendation").innerText = data.job_recommendation || "No recommendation";
       document.getElementById("email").innerText = data.email || "Not found";
       document.getElementById("phone").innerText = data.phone || "Not found";
       document.getElementById("skills").innerText = (data.skills || []).join(", ") || "Not found";

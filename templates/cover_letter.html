@@ -5,58 +5,61 @@
   <title>Cover Letter Generator – Job Match Genie</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #f9fafb;
-      height: 100%;
-    }
-
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .chat-header {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
     .wrapper {
-      max-width: 800px;
-      margin: 0 auto 40px;
+      width: 95%;
+      max-width: 1200px;
+      margin: 40px auto;
       background: white;
       border-radius: 12px;
       padding: 32px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .wrapper h2 {
-      text-align: center;
-      margin-bottom: 24px;
+    .form-row {
+      display: flex;
+      flex-direction: row;
+      gap: 24px;
+      flex-wrap: wrap;
     }
 
-    form textarea {
-      width: 100%;
-      height: 150px;
-      margin-bottom: 16px;
+    .input-block {
+      flex: 1 1 45%;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    textarea {
+      height: 260px;
+      resize: vertical;
       padding: 12px;
       font-size: 14px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      resize: vertical;
+      margin-bottom: 8px;
     }
 
-    form button {
+    .file-upload {
+      margin-bottom: 16px;
+    }
+
+    .tone-selector {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .button-row {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
       padding: 10px 20px;
       background-color: #3b82f6;
       color: white;
@@ -66,7 +69,7 @@
       cursor: pointer;
     }
 
-    form button:hover {
+    button:hover {
       background-color: #2563eb;
     }
 
@@ -78,31 +81,16 @@
       border-radius: 10px;
     }
 
-    /* Responsive Styles */
     @media screen and (max-width: 768px) {
-      .container {
+      .form-row {
         flex-direction: column;
-      }
-
-      .sidebar {
-        width: 100%;
-      }
-
-      .main {
-        margin-left: 0;
-        width: 100%;
-        padding: 16px;
-      }
-
-      .chat-header {
-        justify-content: center;
-        text-align: center;
       }
     }
   </style>
 </head>
 <body>
   <div class="container sidebar-open">
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-header">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
@@ -115,6 +103,7 @@
       </ul>
     </div>
 
+    <!-- Main -->
     <div class="main">
       <div class="chat-header">
         <button class="toggle-btn" id="header-toggle-btn" onclick="toggleSidebar()">&#9776;</button>
@@ -123,15 +112,33 @@
       </div>
 
       <div class="wrapper">
-        <h2>Generate a Cover Letter</h2>
-        <form method="POST">
-          <label>Paste Resume Text:</label>
-          <textarea name="resume" id="resume-input" required>{{ request.form.resume or '' }}</textarea>
+        <h2 style="text-align: center;">Generate a Cover Letter</h2>
+        <form method="POST" enctype="multipart/form-data" id="cover-form">
+          <div class="form-row">
+            <div class="input-block">
+              <label>Paste Resume Text or Upload:</label>
+              <textarea name="resume" id="resume-text" placeholder="Paste your resume...">{{ request.form.resume or '' }}</textarea>
+              <input class="file-upload" type="file" id="resume-file" name="resume_file" accept="application/pdf" />
+            </div>
+            <div class="input-block">
+              <label>Paste Job Description or Upload:</label>
+              <textarea name="jd" id="jd-text" placeholder="Paste job description...">{{ request.form.jd or '' }}</textarea>
+              <input class="file-upload" type="file" id="jd-file" name="jd_file" accept="application/pdf" />
+            </div>
+          </div>
 
-          <label>Paste Job Description:</label>
-          <textarea name="jd" id="jd-input" required>{{ request.form.jd or '' }}</textarea>
+          <div class="tone-selector">
+            <label for="tone">Select Tone:</label>
+            <select name="tone" id="tone">
+              <option value="professional">Professional</option>
+              <option value="academic">Academic</option>
+              <option value="experienced">Experienced</option>
+              <option value="talented">Talented</option>
+              <option value="confident">Confident</option>
+            </select>
+          </div>
 
-          <div style="display: flex; justify-content: center;">
+          <div class="button-row">
             <button type="submit">Generate</button>
           </div>
         </form>
@@ -145,6 +152,52 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const resumeText = document.getElementById('resume-text');
+    const jdText = document.getElementById('jd-text');
+    const resumeFile = document.getElementById('resume-file');
+    const jdFile = document.getElementById('jd-file');
+
+    resumeText.addEventListener('input', () => {
+      resumeFile.disabled = resumeText.value.trim() !== '';
+    });
+
+    jdText.addEventListener('input', () => {
+      jdFile.disabled = jdText.value.trim() !== '';
+    });
+
+    resumeFile.addEventListener('change', async () => {
+      const file = resumeFile.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch("/extract-text", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        resumeText.value = data.text || "Could not extract text.";
+        resumeFile.disabled = true;
+      }
+    });
+
+    jdFile.addEventListener('change', async () => {
+      const file = jdFile.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch("/extract-text", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        jdText.value = data.text || "Could not extract text.";
+        jdFile.disabled = true;
+      }
+    });
+  </script>
+
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

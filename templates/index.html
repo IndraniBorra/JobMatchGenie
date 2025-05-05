@@ -71,22 +71,8 @@
           <use href="#icon-down" />
         </svg>
       </button>
-      <div class="chat-input-container">
-        <div class="chat-input">
-          <div class="file-list"></div>
-          <textarea id="question" placeholder="Ask something..." rows="2" onkeydown="handleKeyDown(event)"></textarea>
-          <input type="file" id="file-input" style="display:none" />
-          <button type="button" id="upload-btn" title="Upload file" class="upload-button">📎</button>
-          <button class="action-button">
-            <svg width="20" height="20">
-              <use href="#icon-send" />
-            </svg>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
-
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@ This web application provides three main features:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Abhiram0908/nlp-resume-assistant.git
+https://github.com/IndraniBorra/JobMatchGenie.git
 cd nlp-resume-assistant
 ```
 
@@ -59,4 +59,4 @@ Then open your browser and go to:
 ## 📽️ Demo Video
 
 Watch the project walkthrough here:  
-👉 https://youtu.be/w94-_X9GRA8?si=r7sI4KM4ZtCCOYZq
+👉 https://www.youtube.com/watch?v=gmSwrSxEqhE

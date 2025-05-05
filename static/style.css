@@ -260,6 +260,7 @@ body {
     margin: 0 auto;
     overflow-y: auto;
     padding: 20px;
+    padding-top: 70px;
     padding-bottom: 130px;
     /* Added extra bottom padding */
     height: calc(100vh - 120px);

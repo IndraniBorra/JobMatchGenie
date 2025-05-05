@@ -1,1 +1,2 @@
 this folder contains pkl files req for resume parser module
+missing file rf_classifier_categorization.pkl cannot be uploaded here due to size constraint so you can find it in my drive: https://drive.google.com/drive/folders/1zDuj-dmJwGWPQY5PJUvjJ1UokDj4SLdB?usp=sharinghttps://drive.google.com/drive/folders/1zDuj-dmJwGWPQY5PJUvjJ1UokDj4SLdB?usp=sharing

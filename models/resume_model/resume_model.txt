@@ -1,0 +1,1 @@
+this folder contains pkl files req for resume parser module

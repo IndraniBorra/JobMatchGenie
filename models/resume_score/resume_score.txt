@@ -1,0 +1,1 @@
+this folder contain pkl files req for resume score module
